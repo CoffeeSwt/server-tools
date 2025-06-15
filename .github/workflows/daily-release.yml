@@ -2,8 +2,8 @@ name: Daily Release
 
 on:
   schedule:
-    - cron: "0 16 * * *" # 每天UTC 16:00 (北京时间 0:00) 运行
-  workflow_dispatch: # 允许手动触发
+    - cron: "0 16 * * *" # 每天UTC 16:00 (北京时间 0:00)
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -25,8 +25,32 @@ jobs:
 
       - name: Get current date
         id: date
-        run: echo "DATE=$(date +'%Y%m%d')" >> $GITHUB_OUTPUT
         shell: bash
+        run: |
+          echo "DATE=$(date +'%Y%m%d')" >> $GITHUB_OUTPUT
+          echo "DATE_START=$(date -d "$(date +%Y-%m-%d)T00:00:00" +%s)" >> $GITHUB_OUTPUT
+          echo "DATE_END=$(date -d "$(date +%Y-%m-%d)T23:59:59" +%s)" >> $GITHUB_OUTPUT
+
+      - name: Count commits today
+        id: commit_count
+        shell: bash
+        run: |
+          DATE_START="${{ steps.date.outputs.DATE_START }}"
+          DATE_END="${{ steps.date.outputs.DATE_END }}"
+          COUNT=$(git log --since="@${DATE_START}" --until="@${DATE_END}" --pretty=format:'%H' | wc -l)
+          echo "count=$COUNT" >> $GITHUB_OUTPUT
+
+      - name: Skip if no commits today (except manual)
+        if: github.event_name == 'schedule' && steps.commit_count.outputs.count == '0'
+        run: echo "No commits today. Skipping build." && exit 0
+        shell: bash
+
+      - name: Set version tag
+        id: version
+        shell: bash
+        run: |
+          VERSION="v${{ steps.date.outputs.DATE }}-${{ steps.commit_count.outputs.count }}"
+          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
 
       - name: Build
         run: |
@@ -34,7 +58,12 @@ jobs:
           go mod tidy
           go build -v -o dist/server-tools.exe ./exe/main.go
 
-      - name: Delete old release
+      - name: Install GitHub CLI
+        run: choco install gh -y
+        shell: powershell
+
+      - name: Delete old release (only for daily)
+        if: github.event_name == 'schedule'
         continue-on-error: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -47,6 +76,5 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           gh release create "nightly" dist/server-tools.exe `
-            --title "每日构建 (${{ steps.date.outputs.DATE }})" `
-            --notes "自动构建于 ${{ steps.date.outputs.DATE }}" `
-            --prerelease
+            --title "server-tools ${{ steps.version.outputs.VERSION }}" `
+            --notes "dayz-server-tools" `
