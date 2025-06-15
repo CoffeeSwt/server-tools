@@ -3,6 +3,7 @@ package server
 import (
 	"os"
 	"os/exec"
+	"server-tools/config"
 	"server-tools/logger"
 	"strconv"
 	"time"
@@ -12,7 +13,8 @@ import (
 
 func StartServer() {
 	l := logger.GetLogger()
-	l.Info("🚀 启动 DayZ 服务器监控程序...")
+	cfg := config.GetConfig()
+	l.Info("🚀 启动 " + cfg.ServerName + "服务器监控程序...")
 
 	// 获取服务器路径和启动参数(只需获取一次)
 	slp := GetServerLaunchParameters()
@@ -47,7 +49,7 @@ func StartServer() {
 			return
 		}
 
-		l.Info("✅ DayZ 服务器已启动", zap.Int("PID", cmd.Process.Pid))
+		l.Info("✅ "+cfg.ServerName+"服务器已启动", zap.Int("PID", cmd.Process.Pid))
 
 		// 等待进程结束
 		if err := cmd.Wait(); err != nil {
