@@ -1,0 +1,6 @@
+# 服务器名称
+server_name: "DayZ Server"
+port: 2302
+mission: "empty.banov"
+client_mods: ["@CF"]
+server_mods: []

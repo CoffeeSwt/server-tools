@@ -1,1 +1,5 @@
-/exe
+/exe/logs
+/exe/mpmissions
+/exe/release-manual
+/exe/profiles
+/exe/serverCfgs
