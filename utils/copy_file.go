@@ -1,17 +1,16 @@
 package utils
 
 import (
-	"errors"
 	"io"
 	"os"
-	"path/filepath"
 )
 
 // CopyFile 安全复制文件：如果目标已存在，则跳过（返回特定错误）
 func CopyKeyFile(src, dst, name string) error {
 	// 如果目标文件已存在，直接返回（不覆盖）
 	if _, err := os.Stat(dst); err == nil {
-		return errors.New(name + "模组的" + filepath.Base(dst) + "key文件" + "已存在，跳过复制")
+		// return errors.New(name + "模组的" + filepath.Base(dst) + "key文件" + "已存在，跳过复制")
+		return nil
 	}
 
 	in, err := os.Open(src)
