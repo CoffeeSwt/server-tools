@@ -33,7 +33,7 @@ func initLogger() {
 	if _, err := os.Stat(logDir); os.IsNotExist(err) {
 		err = os.Mkdir(logDir, 0755)
 		if err != nil {
-			panic("无法创建 logs 目录: " + err.Error())
+			GetLogger().Error("❌ 创建日志目录失败", zap.Error(err))
 			fmt.Println("3 秒后自动退出...")
 			time.Sleep(3 * time.Second)
 			os.Exit(1)

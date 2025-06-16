@@ -32,7 +32,7 @@ func initConfig() {
 
 	err := viper.ReadInConfig()
 	if err != nil {
-		logger.GetLogger().Fatal("❌ 读取配置文件失败: ", zap.Error(err))
+		logger.GetLogger().Error("❌ 读取配置文件失败: ", zap.Error(err))
 		fmt.Println("3 秒后自动退出...")
 		time.Sleep(3 * time.Second)
 		os.Exit(1)
@@ -40,7 +40,7 @@ func initConfig() {
 
 	err = viper.Unmarshal(&appConfig)
 	if err != nil {
-		logger.GetLogger().Fatal("❌ 配置解析失败: ", zap.Error(err))
+		logger.GetLogger().Error("❌ 配置解析失败: ", zap.Error(err))
 		fmt.Println("3 秒后自动退出...")
 		time.Sleep(3 * time.Second)
 		os.Exit(1)
