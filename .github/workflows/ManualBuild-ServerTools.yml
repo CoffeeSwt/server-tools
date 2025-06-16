@@ -38,6 +38,15 @@ jobs:
         run: choco install gh -y
         shell: powershell
 
+      - name: Delete existing release and tag if exists
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TAG=${{ steps.version.outputs.VERSION }}
+          gh release delete "$TAG" -y || echo "No existing release to delete"
+          git tag -d "$TAG" || echo "No local tag to delete"
+          git push origin ":refs/tags/$TAG" || echo "No remote tag to delete"
+
       - name: Create Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
