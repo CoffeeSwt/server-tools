@@ -1,6 +1,7 @@
 package logger
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 	"sync"
@@ -33,6 +34,9 @@ func initLogger() {
 		err = os.Mkdir(logDir, 0755)
 		if err != nil {
 			panic("无法创建 logs 目录: " + err.Error())
+			fmt.Println("3 秒后自动退出...")
+			time.Sleep(3 * time.Second)
+			os.Exit(1)
 		}
 	}
 

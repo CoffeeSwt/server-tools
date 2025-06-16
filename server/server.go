@@ -2,6 +2,7 @@ package server
 
 import (
 	"errors"
+	"fmt"
 	"os"
 	"path/filepath"
 	"server-tools/config"
@@ -9,6 +10,7 @@ import (
 	"server-tools/utils"
 	"strings"
 	"sync"
+	"time"
 
 	"go.uber.org/zap"
 )
@@ -33,6 +35,8 @@ func GetServerLaunchParameters() *ServerLaunchParameters {
 		paths, err := GetDayZPaths()
 		if err != nil {
 			logger.GetLogger().Error("获取 DayZ 路径失败", zap.Error(err))
+			fmt.Println("3 秒后自动退出...")
+			time.Sleep(3 * time.Second)
 			os.Exit(1)
 			// 这里直接退出程序，因为无法继续进行后续操作
 			return

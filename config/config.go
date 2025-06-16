@@ -1,8 +1,11 @@
 package config
 
 import (
+	"fmt"
+	"os"
 	"server-tools/logger"
 	"sync"
+	"time"
 
 	"github.com/spf13/viper"
 	"go.uber.org/zap"
@@ -30,11 +33,17 @@ func initConfig() {
 	err := viper.ReadInConfig()
 	if err != nil {
 		logger.GetLogger().Fatal("❌ 读取配置文件失败: ", zap.Error(err))
+		fmt.Println("3 秒后自动退出...")
+		time.Sleep(3 * time.Second)
+		os.Exit(1)
 	}
 
 	err = viper.Unmarshal(&appConfig)
 	if err != nil {
 		logger.GetLogger().Fatal("❌ 配置解析失败: ", zap.Error(err))
+		fmt.Println("3 秒后自动退出...")
+		time.Sleep(3 * time.Second)
+		os.Exit(1)
 	}
 }
 

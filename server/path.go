@@ -40,6 +40,8 @@ func GetDayZPaths() (*DayZPaths, error) {
 		paths, err = buildPaths()
 		if err != nil {
 			logger.GetLogger().Error("获取 DayZ 路径失败", zap.Error(err))
+			fmt.Println("3 秒后自动退出...")
+			time.Sleep(3 * time.Second)
 			os.Exit(1)
 			return
 		}
