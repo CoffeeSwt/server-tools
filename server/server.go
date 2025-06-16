@@ -86,7 +86,8 @@ func copyKeys(modOriginPath string) error {
 
 	if foundKeyDir == "" {
 		// 没找到 key 目录，直接返回
-		return errors.New("未找到模组 " + modName + " 的 keys 目录")
+		// return errors.New("未找到模组 " + modName + " 的 keys 目录")
+		return errors.New("没有找到" + modName + "模组的的 keys 目录")
 	}
 
 	// 遍历 key 目录下的所有文件，复制到目标目录
@@ -114,6 +115,10 @@ func resolveModsWithKeys(mods []string, basePath string) []string {
 	var result []string
 	for _, mod := range mods {
 		modPath := filepath.Join(basePath, mod)
+		if _, err := os.Stat(modPath); os.IsNotExist(err) {
+			logger.GetLogger().Warn("模组路径不存在", zap.String("modPath", modPath))
+			continue
+		}
 		result = append(result, modPath)
 		if err := copyKeys(modPath); err != nil {
 			logger.GetLogger().Info("复制模组 keys 失败", zap.String("mod", mod), zap.Error(err))

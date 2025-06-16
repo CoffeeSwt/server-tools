@@ -10,6 +10,7 @@ import (
 	"server-tools/logger"
 	"strings"
 	"sync"
+	"time"
 
 	"go.uber.org/zap"
 	"golang.org/x/sys/windows/registry"
@@ -44,6 +45,8 @@ func GetDayZPaths() (*DayZPaths, error) {
 		}
 		if hasCreatedDir {
 			logger.GetLogger().Info("首次运行，部分目录已自动创建，请重新运行程序。")
+			fmt.Println("3 秒后自动退出...")
+			time.Sleep(3 * time.Second)
 			os.Exit(0)
 		}
 	})
