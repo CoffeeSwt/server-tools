@@ -1,10 +1,12 @@
 package server
 
 import (
+	"encoding/json"
 	"fmt"
 	"os"
 	"path/filepath"
 	"reflect"
+	"regexp"
 	"server-tools/logger"
 	"strings"
 	"sync"
@@ -14,13 +16,13 @@ import (
 )
 
 type DayZPaths struct {
-	SteamPath            string `steam:"true"`                                                        // 从注册表获取
+	SteamPath            string `steam:"true"`                                                        // 主 Steam 路径（注册表）
 	DayZPath             string `path:"steamapps/common/DayZ"`                                        // DayZ 客户端路径
 	DayZServerPath       string `path:"steamapps/common/DayZServer"`                                  // DayZ 服务端路径
-	DayZServerExecutable string `path:"steamapps/common/DayZServer/DayZServer_x64.exe" isDir:"false"` // 可执行文件
-	MissionsPath         string `path:"mpmissions" create:"true"`                                     // 任务目录（当前工作目录）
-	ModsPath             string `path:"steamapps/common/DayZ/!Workshop"`                              // 模组目录
-	ProfilePath          string `path:"profiles" create:"true"`                                       // 配置文件目录
+	DayZServerExecutable string `path:"steamapps/common/DayZServer/DayZServer_x64.exe" isDir:"false"` // 服务端可执行文件
+	MissionsPath         string `path:"mpmissions" create:"true"`                                     // 当前工作目录
+	ModsPath             string `path:"steamapps/common/DayZ/!Workshop"`                              // 客户端模组目录
+	ProfilePath          string `path:"profiles" create:"true"`                                       // 配置目录
 	CfgPath              string `path:"serverCfgs" create:"true"`                                     // 服务端配置目录
 	KeysPath             string `path:"steamapps/common/DayZServer/keys"`                             // 密钥目录
 }
@@ -28,53 +30,100 @@ type DayZPaths struct {
 var (
 	paths         *DayZPaths
 	pathsOnce     sync.Once
-	hasCreatedDir bool // 全局标志，表示是否创建过目录
+	hasCreatedDir bool
 )
 
-// 单例访问
 func GetDayZPaths() (*DayZPaths, error) {
 	var err error
 	pathsOnce.Do(func() {
 		paths, err = buildPaths()
 		if err != nil {
 			logger.GetLogger().Error("获取 DayZ 路径失败", zap.Error(err))
-			// 这里直接退出程序，因为无法继续进行后续操作
 			os.Exit(1)
 			return
 		}
-		// 如果创建过目录，则提示并退出程序
 		if hasCreatedDir {
-			logger.GetLogger().Info("程序首次启动，缺少部分目录，已自动创建，请重新运行程序。")
+			logger.GetLogger().Info("首次运行，部分目录已自动创建，请重新运行程序。")
 			os.Exit(0)
 		}
 	})
 	return paths, err
 }
 
-// 读取注册表，获取 Steam 安装路径
-func getSteamInstallPath() (string, error) {
-	key, err := registry.OpenKey(registry.LOCAL_MACHINE, `SOFTWARE\WOW6432Node\Valve\Steam`, registry.QUERY_VALUE)
+// 获取 Steam 所有库路径（包括主库和附加库）
+func getSteamLibraries() ([]string, error) {
+	var libs []string
+
+	// 注册表读取主路径
+	key, err := registry.OpenKey(registry.CURRENT_USER, `Software\Valve\Steam`, registry.QUERY_VALUE)
 	if err != nil {
-		key, err = registry.OpenKey(registry.LOCAL_MACHINE, `SOFTWARE\Valve\Steam`, registry.QUERY_VALUE)
-		if err != nil {
-			return "", fmt.Errorf("failed to open registry: %w", err)
-		}
+		return nil, fmt.Errorf("打开注册表失败: %w", err)
 	}
 	defer key.Close()
 
-	path, _, err := key.GetStringValue("InstallPath")
+	mainPath, _, err := key.GetStringValue("SteamPath")
 	if err != nil {
-		return "", fmt.Errorf("failed to read InstallPath: %w", err)
+		return nil, fmt.Errorf("读取 SteamPath 失败: %w", err)
 	}
-	return path, nil
+	libs = append(libs, mainPath)
+
+	// libraryfolders.vdf 文件路径
+	vdfPath := filepath.Join(mainPath, "steamapps", "libraryfolders.vdf")
+	content, err := os.ReadFile(vdfPath)
+	if err != nil {
+		return libs, nil
+	}
+	data := string(content)
+
+	// 1. 解析新版 JSON 格式
+	type Folder struct {
+		Path string `json:"path"`
+	}
+	type LibraryFolders struct {
+		LibraryFolders map[string]Folder `json:"libraryfolders"`
+	}
+	var parsed LibraryFolders
+	if err := json.Unmarshal(content, &parsed); err == nil {
+		for _, folder := range parsed.LibraryFolders {
+			if folder.Path != "" {
+				libs = append(libs, folder.Path)
+			}
+		}
+		return uniqueStrings(libs), nil
+	}
+
+	// 2. fallback 到旧格式正则
+	re := regexp.MustCompile(`"path"\s+"([^"]+)"`)
+	matches := re.FindAllStringSubmatch(data, -1)
+	for _, match := range matches {
+		if len(match) > 1 {
+			path := strings.ReplaceAll(match[1], `\\`, `\`)
+			libs = append(libs, path)
+		}
+	}
+
+	return uniqueStrings(libs), nil
 }
 
-// 使用标签自动构造路径
-func buildPaths() (*DayZPaths, error) {
-	steamPath, err := getSteamInstallPath()
-	if err != nil {
-		return nil, err
+func uniqueStrings(arr []string) []string {
+	seen := make(map[string]struct{})
+	var result []string
+	for _, v := range arr {
+		if _, ok := seen[v]; !ok {
+			result = append(result, v)
+			seen[v] = struct{}{}
+		}
 	}
+	return result
+}
+
+// 构建 DayZPaths 结构体并自动判断路径
+func buildPaths() (*DayZPaths, error) {
+	steamLibraries, err := getSteamLibraries()
+	if err != nil || len(steamLibraries) == 0 {
+		return nil, fmt.Errorf("无法获取 Steam 库路径: %w", err)
+	}
+	steamPath := steamLibraries[0]
 	cwd, _ := os.Getwd()
 
 	result := &DayZPaths{}
@@ -84,7 +133,7 @@ func buildPaths() (*DayZPaths, error) {
 	for i := 0; i < val.NumField(); i++ {
 		field := typ.Field(i)
 		tagPath := field.Tag.Get("path")
-		isDir := field.Tag.Get("isDir") != "false" // 默认为目录
+		isDir := field.Tag.Get("isDir") != "false" // 默认为 true
 		create := field.Tag.Get("create") == "true"
 		isSteam := field.Tag.Get("steam") == "true"
 
@@ -94,41 +143,54 @@ func buildPaths() (*DayZPaths, error) {
 
 		case tagPath != "":
 			var fullPath string
+
+			// 绝对路径直接用
 			if filepath.IsAbs(tagPath) || filepath.VolumeName(tagPath) != "" {
 				fullPath = tagPath
+
 			} else if strings.HasPrefix(tagPath, "steamapps") {
-				fullPath = filepath.Join(steamPath, filepath.FromSlash(tagPath))
+				// 遍历所有 Steam 库路径
+				for _, lib := range steamLibraries {
+					p := filepath.Join(lib, filepath.FromSlash(tagPath))
+					if _, err := os.Stat(p); err == nil || (create && isDir) {
+						fullPath = p
+						break
+					}
+				}
+				if fullPath == "" {
+					return nil, fmt.Errorf("未在任何 Steam 库中找到: %s", tagPath)
+				}
+
 			} else {
 				fullPath = filepath.Join(cwd, filepath.FromSlash(tagPath))
 			}
 
 			if err := ensurePath(fullPath, isDir, create); err != nil {
-				return nil, fmt.Errorf("%s init failed: %w", field.Name, err)
+				return nil, fmt.Errorf("%s 初始化失败: %w", field.Name, err)
 			}
 			val.Field(i).SetString(fullPath)
 		}
 	}
+
 	return result, nil
 }
 
-// 检查路径是否存在，可选创建
+// 检查路径是否存在；可选创建
 func ensurePath(path string, isDir, create bool) error {
 	info, err := os.Stat(path)
 	if err == nil {
 		if isDir && !info.IsDir() {
-			return fmt.Errorf("%s exists but is not a directory", path)
+			return fmt.Errorf("%s 存在但不是目录", path)
 		}
 		if !isDir && info.IsDir() {
-			return fmt.Errorf("%s exists but is a directory", path)
+			return fmt.Errorf("%s 存在但是目录", path)
 		}
 		return nil
 	}
 	if os.IsNotExist(err) && create && isDir {
-		// 创建目录
 		if err := os.MkdirAll(path, 0755); err != nil {
 			return err
 		}
-		// 标记已经创建过目录
 		hasCreatedDir = true
 		return nil
 	}
