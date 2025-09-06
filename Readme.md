@@ -117,43 +117,43 @@ server_mods: []              # 服务器模组
 6. 填写 cfg 文件内容，官方参考配置：
 
 ```cfg
-hostname = "示例服务器";     # 服务器名称
-password = "";              # 连接服务器密码
-passwordAdmin = "";         # 管理员密码
+hostname = "示例服务器";     // 服务器名称
+password = "";              // 连接服务器密码
+passwordAdmin = "";         // 管理员密码
 
-description = "";          # 服务器描述，将显示在客户端服务器浏览器中
+description = "";          // 服务器描述，将显示在客户端服务器浏览器中
 
-enableWhitelist = 0;       # 启用/禁用白名单 (0-1)
+enableWhitelist = 0;       // 启用/禁用白名单 (0-1)
 
-maxPlayers = 60;          # 最大玩家数
+maxPlayers = 60;          // 最大玩家数
 
-verifySignatures = 2;     # 验证 .pbo 文件签名 (仅支持值 2)
-forceSameBuild = 1;       # 强制客户端版本与服务器版本一致 (0-1)
+verifySignatures = 2;     // 验证 .pbo 文件签名 (仅支持值 2)
+forceSameBuild = 1;       // 强制客户端版本与服务器版本一致 (0-1)
 
-disableVoN = 0;          # 启用/禁用语音 (0-1)
-vonCodecQuality = 20;    # 语音编码质量，越高越好 (0-30)
+disableVoN = 0;          // 启用/禁用语音 (0-1)
+vonCodecQuality = 20;    // 语音编码质量，越高越好 (0-30)
 
-shardId = "123abc";      # 私人服务器的六位字母数字标识符
+shardId = "123abc";      // 私人服务器的六位字母数字标识符
 
-disable3rdPerson=0;      # 切换第三人称视角 (0-1)
-disableCrosshair=0;     # 切换准星显示 (0-1)
+disable3rdPerson=0;      // 切换第三人称视角 (0-1)
+disableCrosshair=0;     // 切换准星显示 (0-1)
 
-disablePersonalLight = 1;   # 禁用所有客户端的个人光源
-lightingConfig = 0;         # 0 为较亮的夜晚设置，1 为较暗的夜晚设置
+disablePersonalLight = 1;   // 禁用所有客户端的个人光源
+lightingConfig = 0;         // 0 为较亮的夜晚设置，1 为较暗的夜晚设置
 
-serverTime="SystemTime";    # 服务器初始时间，"SystemTime"表示使用本机时间
-serverTimeAcceleration=12;  # 时间加速倍率 (0-24)
-serverNightTimeAcceleration=1;  # 夜间时间加速倍率 (0.1-64)
-serverTimePersistent=0;     # 时间持久化 (0-1)
+serverTime="SystemTime";    // 服务器初始时间，"SystemTime"表示使用本机时间
+serverTimeAcceleration=12;  // 时间加速倍率 (0-24)
+serverNightTimeAcceleration=1;  // 夜间时间加速倍率 (0.1-64)
+serverTimePersistent=0;     // 时间持久化 (0-1)
 
-guaranteedUpdates=1;        # 游戏服务器通信协议 (仅使用 1)
+guaranteedUpdates=1;        // 游戏服务器通信协议 (仅使用 1)
 
-loginQueueConcurrentPlayers=5;  # 同时处理的登录玩家数量
-loginQueueMaxPlayers=500;       # 登录队列最大玩家数
+loginQueueConcurrentPlayers=5;  // 同时处理的登录玩家数量
+loginQueueMaxPlayers=500;       // 登录队列最大玩家数
 
-instanceId = 1;             # DayZ 服务器实例 ID
+instanceId = 1;             // DayZ 服务器实例 ID
 
-storageAutoFix = 1;         # 检查并修复损坏的持久化文件 (0-1)
+storageAutoFix = 1;         // 检查并修复损坏的持久化文件 (0-1)
 
 class Missions
 {
