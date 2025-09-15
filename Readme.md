@@ -6,6 +6,11 @@
 
 Easy management of Dayz's servers
 
+## Requirement
+1. Ensure you have installed DayZ and DayZServer via Steam
+2. Ensure you have lanuched DayZ Lanucher at least once
+3. After you change your mod, ensure you you have lanuched DayZ Lanucher to make the mod update successfully
+
 ## How to use
 
 1. Put `server-tools.exe` in an empty folder
@@ -98,6 +103,11 @@ class Missions
 
 轻松管理 DayZ 服务器
 
+## 前置要求
+1. 确保你通过Steam安装好了DayZ和DayZ Server
+2. 确保你至少启动过一次DayZ客户端启动器
+3. 如果你需要安装模组，请确保你订阅模组后，启动过游戏启动器，以确保模组更新完成
+
 ## 使用方法
 
 1. 将 `server-tools.exe` 放置在空文件夹中
@@ -173,7 +183,7 @@ class Missions
 {
     class DayZ
     {
-        template="dayzOffline.chernarusplus"; # 服务器启动时加载的任务
+        template="dayzOffline.chernarusplus"; // 服务器启动时加载的任务
     };
 };
 ```

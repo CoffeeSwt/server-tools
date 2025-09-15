@@ -42,6 +42,7 @@ func StartServer() {
 
 	for {
 		l.Info("正在启动服务器...")
+		l.Info("如果遇到BattleEye相关报错，请确保防火墙，杀毒等工具已经关闭，代码完全开源无毒，请放心使用")
 		cmd := exec.Command(paths.DayZServerExecutable, args...)
 		cmd.Stdout = os.Stdout
 		cmd.Stderr = os.Stderr

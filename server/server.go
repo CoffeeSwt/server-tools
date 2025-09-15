@@ -34,7 +34,7 @@ func GetServerLaunchParameters() *ServerLaunchParameters {
 	serverLaunchOnce.Do(func() {
 		paths, err := GetDayZPaths()
 		if err != nil {
-			logger.GetLogger().Error("获取 DayZ 路径失败", zap.Error(err))
+			logger.GetLogger().Error("获取 DayZ 路径失败，请确保DayZ已安装", zap.Error(err))
 			fmt.Println("3 秒后自动退出...")
 			time.Sleep(3 * time.Second)
 			os.Exit(1)
@@ -90,8 +90,7 @@ func copyKeys(modOriginPath string) error {
 
 	if foundKeyDir == "" {
 		// 没找到 key 目录，直接返回
-		// return errors.New("未找到模组 " + modName + " 的 keys 目录")
-		return errors.New("没有找到" + modName + "模组的的 keys 目录")
+		return errors.New("没有找到" + modName + "模组的的 keys 目录，订阅模组后请先打开一次DayZ客户端，进行模组下载与更新")
 	}
 
 	// 遍历 key 目录下的所有文件，复制到目标目录
@@ -108,7 +107,7 @@ func copyKeys(modOriginPath string) error {
 		dstFile := filepath.Join(paths.KeysPath, entry.Name())
 
 		if err := utils.CopyKeyFile(srcFile, dstFile, modName); err != nil {
-			return err
+			return errors.New("复制 " + modName + " 模组的 key 文件 " + entry.Name() + " 失败: " + err.Error() + "，请检查DayZServer的keys目录是否存在，以及权限是否正确")
 		}
 	}
 

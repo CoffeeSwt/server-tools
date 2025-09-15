@@ -2,6 +2,7 @@ package server
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -176,8 +177,22 @@ func buildPaths() (*DayZPaths, error) {
 			val.Field(i).SetString(fullPath)
 		}
 	}
-
+	if err := checkDayZPathLegal(result); err != nil {
+		return nil, err
+	}
 	return result, nil
+}
+
+func checkDayZPathLegal(paths *DayZPaths) error {
+	//先检查DayZ是否安装
+	if _, err := os.Stat(paths.DayZPath); os.IsNotExist(err) {
+		return errors.New("没找到DayZ安装目录，请先通过Steam安装DayZ")
+	}
+	//再检查DayZServer是否安装
+	if _, err := os.Stat(paths.DayZServerPath); os.IsNotExist(err) {
+		return errors.New("没找到DayZServer安装目录，请先通过Steam安装DayZServer")
+	}
+	return nil
 }
 
 // 检查路径是否存在；可选创建
