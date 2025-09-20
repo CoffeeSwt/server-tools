@@ -22,7 +22,8 @@ type DayZPaths struct {
 	DayZPath             string `path:"steamapps/common/DayZ"`                                        // DayZ 客户端路径
 	DayZServerPath       string `path:"steamapps/common/DayZServer"`                                  // DayZ 服务端路径
 	DayZServerExecutable string `path:"steamapps/common/DayZServer/DayZServer_x64.exe" isDir:"false"` // 服务端可执行文件
-	MissionsPath         string `path:"mpmissions" create:"true"`                                     // 当前工作目录
+	MissionsPath         string `path:"mpmissions" create:"true"`                                     // 当前工作目录的 mpmissions 目录
+	MissionsDefaultPath  string `path:"steamapps/common/DayZServer/mpmissions" `                      // DayZ服务端默认任务目录
 	ModsPath             string `path:"steamapps/common/DayZ/!Workshop"`                              // 客户端模组目录
 	ProfilePath          string `path:"profiles" create:"true"`                                       // 配置目录
 	CfgPath              string `path:"serverCfgs" create:"true"`                                     // 服务端配置目录
@@ -35,7 +36,7 @@ var (
 	hasCreatedDir bool
 )
 
-func GetDayZPaths() (*DayZPaths, error) {
+func GetDayZPaths() *DayZPaths {
 	var err error
 	pathsOnce.Do(func() {
 		paths, err = buildPaths()
@@ -44,7 +45,6 @@ func GetDayZPaths() (*DayZPaths, error) {
 			fmt.Println("3 秒后自动退出...")
 			time.Sleep(3 * time.Second)
 			os.Exit(1)
-			return
 		}
 		if hasCreatedDir {
 			logger.GetLogger().Info("首次运行，部分目录已自动创建，请重新运行程序。")
@@ -53,7 +53,7 @@ func GetDayZPaths() (*DayZPaths, error) {
 			os.Exit(0)
 		}
 	})
-	return paths, err
+	return paths
 }
 
 // 获取 Steam 所有库路径（包括主库和附加库）

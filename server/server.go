@@ -2,15 +2,14 @@ package server
 
 import (
 	"errors"
-	"fmt"
 	"os"
 	"path/filepath"
 	"server-tools/config"
+	"server-tools/defaultCfg"
 	"server-tools/logger"
 	"server-tools/utils"
 	"strings"
 	"sync"
-	"time"
 
 	"go.uber.org/zap"
 )
@@ -32,46 +31,45 @@ type ServerLaunchParameters struct {
 // 获取启动项
 func GetServerLaunchParameters() *ServerLaunchParameters {
 	serverLaunchOnce.Do(func() {
-		paths, err := GetDayZPaths()
-		if err != nil {
-			logger.GetLogger().Error("获取 DayZ 路径失败，请确保DayZ已安装", zap.Error(err))
-			fmt.Println("3 秒后自动退出...")
-			time.Sleep(3 * time.Second)
-			os.Exit(1)
-			// 这里直接退出程序，因为无法继续进行后续操作
-			return
-		}
-		cfg := config.GetConfig()
-
-		port := cfg.Port
-
-		// 统一处理模组路径和 keys 复制
-		clientMods := resolveModsWithKeys(cfg.ClientMods, paths.ModsPath)
-		serverMods := resolveModsWithKeys(cfg.ServerMods, paths.ModsPath)
-
-		// 构造任务路径
-		missionPath := filepath.Join(paths.MissionsPath, cfg.Mission)
-
-		// 构造配置文件路径
-		profilePath := filepath.Join(paths.ProfilePath, cfg.ServerName)
-
-		serverLaunchParameters = &ServerLaunchParameters{
-			Port:       port,
-			ClientMods: strings.Join(clientMods, ";"),
-			ServerMods: strings.Join(serverMods, ";"),
-			Mission:    missionPath,
-			Profiles:   profilePath,
-			Config:     filepath.Join(paths.CfgPath, cfg.ServerName+".cfg"),
-		}
+		initServerLaunchParameters()
 	})
-
 	return serverLaunchParameters
+}
+
+func initServerLaunchParameters() {
+	dpaths := GetDayZPaths()
+	cfg := config.GetConfig()
+	if defaultCfg.IsUseDefaultConfig() {
+		config.UseDefaultConfig()
+	}
+
+	port := cfg.Port
+
+	// 统一处理模组路径和 keys 复制
+	clientMods := resolveModsWithKeys(cfg.ClientMods, dpaths.ModsPath)
+	serverMods := resolveModsWithKeys(cfg.ServerMods, dpaths.ModsPath)
+
+	// 构造任务路径
+	// missionPath := filepath.Join()
+	missionPath := buildMissionPath(dpaths, cfg.Mission)
+
+	// 构造配置文件路径
+	profilePath := filepath.Join(dpaths.ProfilePath, cfg.ServerName)
+
+	serverLaunchParameters = &ServerLaunchParameters{
+		Port:       port,
+		ClientMods: strings.Join(clientMods, ";"),
+		ServerMods: strings.Join(serverMods, ";"),
+		Mission:    missionPath,
+		Profiles:   profilePath,
+		Config:     filepath.Join(dpaths.CfgPath, cfg.ServerName+".cfg"),
+	}
 }
 
 // 复制模组中的 keys 到 DayZServer 的 keys 目录
 func copyKeys(modOriginPath string) error {
 	modName := filepath.Base(modOriginPath)
-	paths, _ := GetDayZPaths()
+	paths := GetDayZPaths()
 
 	// 所有可能的 key 文件夹名（不区分大小写）
 	keyDirs := []string{"keys", "Keys", "key", "Key"}

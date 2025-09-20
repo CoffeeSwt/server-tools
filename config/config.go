@@ -1,11 +1,9 @@
 package config
 
 import (
-	"fmt"
-	"os"
+	"server-tools/defaultCfg"
 	"server-tools/logger"
 	"sync"
-	"time"
 
 	"github.com/spf13/viper"
 	"go.uber.org/zap"
@@ -33,17 +31,16 @@ func initConfig() {
 	err := viper.ReadInConfig()
 	if err != nil {
 		logger.GetLogger().Error("❌ 读取配置文件失败: ", zap.Error(err))
-		fmt.Println("3 秒后自动退出...")
-		time.Sleep(3 * time.Second)
-		os.Exit(1)
+		logger.GetLogger().Info("正在使用默认的服务器配置...")
+		defaultCfg.SetUseDefaultConfig(true)
+		return
 	}
 
 	err = viper.Unmarshal(&appConfig)
 	if err != nil {
 		logger.GetLogger().Error("❌ 配置解析失败: ", zap.Error(err))
-		fmt.Println("3 秒后自动退出...")
-		time.Sleep(3 * time.Second)
-		os.Exit(1)
+		logger.GetLogger().Info("正在使用默认的服务器配置...")
+		defaultCfg.SetUseDefaultConfig(true)
 	}
 }
 
@@ -52,4 +49,14 @@ func GetConfig() *Config {
 		initConfig()
 	})
 	return &appConfig
+}
+
+func UseDefaultConfig() {
+	appConfig = Config{
+		Port:       2302,
+		ServerName: "MyDayZServer",
+		Mission:    "default.chernarusplus", //这个是唯一值
+		ClientMods: []string{},
+		ServerMods: []string{},
+	}
 }

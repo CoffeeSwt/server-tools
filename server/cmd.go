@@ -16,16 +16,13 @@ func StartServer() {
 	l := logger.GetLogger()
 	cfg := config.GetConfig()
 	l.Info("🚀 启动 " + cfg.ServerName + "服务器监控程序...")
+	l.Info("如果遇到小白框自动关闭又自动重启，请检查你的mpmissions目录下是否有任务文件，以及任务文件是否合法，不合法会导致服务器无法启动")
+	l.Info("解决方案:去 https://github.com/BohemiaInteractive/DayZ-Central-Economy 下载官方的任务文件放到mpmissions目录下")
+	l.Info("请使用小白使用这三个任务文件夹: dayzOffline.chernarusplus / dayzOffline.enoch / dayzOffline.sakhal（需要购买DLC），注意前缀和文件夹名，不要复制错了")
 
 	// 获取服务器路径和启动参数(只需获取一次)
 	slp := GetServerLaunchParameters()
-	paths, err := GetDayZPaths()
-	if err != nil {
-		l.Error("获取 DayZ 路径失败", zap.Error(err))
-		fmt.Println("3 秒后自动退出...")
-		os.Exit(1)
-		return
-	}
+	paths := GetDayZPaths()
 
 	args := []string{
 		"-port=" + strconv.Itoa(slp.Port),
