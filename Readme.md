@@ -169,7 +169,7 @@ class Missions
 {
     class DayZ
     {
-        template="dayzOffline.chernarusplus"; # 服务器启动时加载的任务
+        template="dayzOffline.chernarusplus"; // 服务器启动时加载的任务
     };
 };
 ```
