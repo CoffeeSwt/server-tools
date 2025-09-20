@@ -6,24 +6,22 @@
 
 ## 前置要求
 
-1. 确保你通过 Steam 安装好了 DayZ 和 DayZ Server
-2. 确保你至少启动过一次 DayZ 客户端启动器
-3. 如果你需要安装模组，请确保你订阅模组后，启动过游戏启动器，以确保模组更新完成
-
-## 使用方法
+1. 确保你通过 Steam 安装好了 DayZ 和 DayZ Server。
+2. 确保你至少启动过一次 DayZ 客户端启动器。
+3. 如果你需要安装模组，请确保你订阅模组后，启动过游戏启动器，以确保模组更新完成。
 
 ## 快速启动
 
-1. 建立一个空文件夹（不要在桌面，不要使用中文），将该 exe 程序拖入这个空文件夹
-2. 双击启动一次 exe 程序，等待程序会自动关闭
-3. 再次启动 exe 程序，等待服务器开启
-4. 打开 DayZ 游戏，在 LAN 找到你的服务器，设置 DLC 并加入
+1. 建立一个空文件夹（不要在桌面，不要使用中文），将该 exe 程序拖入这个空文件夹。
+2. 双击启动一次 exe 程序，等待程序会自动关闭。
+3. 再次启动 exe 程序，等待服务器开启。
+4. 打开 DayZ 游戏，在 LAN 找到你的服务器，设置 DLC 并加入。
 5. 开始玩吧~
 
 ## 高级使用（自定义配置）
 
-1. 将 `server-tools.exe` 放置在空文件夹中
-2. 在该文件夹中创建 `config.yaml` 文件
+1. 将 `server-tools.exe` 放置在空文件夹中。
+2. 在该文件夹中创建 `config.yaml` 文件。
 3. 在 `config.yaml` 中填写以下配置项
 
 ```yaml
@@ -34,8 +32,8 @@ client_mods: ["@CF"] # 客户端模组
 server_mods: [] # 服务器模组
 ```
 
-4. 首次运行 `server-tools.exe`，确保目录中已生成 `mpmissions`、`profiles` 和 `serverCfgs` 文件夹
-5. 根据 `config.yaml` 中的 `server_name` 创建对应的配置文件。例如，如果 `server_name` 为 `ServerTest`，则在 `serverCfgs` 文件夹中创建 `ServerTest.cfg` 文件
+4. 首次运行 `server-tools.exe`，确保目录中已生成 `mpmissions`、`profiles` 和 `serverCfgs` 文件夹。
+5. 根据 `config.yaml` 中的 `server_name` 创建对应的配置文件。例如，如果 `server_name` 为 `ServerTest`，则在 `serverCfgs` 文件夹中创建 `ServerTest.cfg` 文件。
 6. 填写 cfg 文件内容，官方参考配置：
 
 ```cfg
@@ -106,100 +104,103 @@ class Missions
 
 # Dayz Server Tools
 
-Easy management of Dayz's servers
+Easily manage your DayZ server
 
-## Requirement
+## Prerequisites
 
-1. Ensure you have installed DayZ and DayZServer via Steam
-2. Ensure you have lanuched DayZ Lanucher at least once
-3. After you change your mod, ensure you you have lanuched DayZ Lanucher to make the mod update successfully
+1. Make sure you have installed DayZ and DayZ Server via Steam.
+2. Make sure you have launched the DayZ client launcher at least once.
+3. If you need to install mods, make sure you have subscribed to the mods and launched the game launcher to complete the mod update.
 
-## How to use
+## Quick Start
 
-1. Put `server-tools.exe` in an empty folder
-2. Create the `config.yaml` file in this folder
-3. Fill in the `config.yaml` file with these items
+1. Create an empty folder (do not use Desktop, do not use Chinese characters), and put the exe program into this folder.
+2. Double-click to run the exe program once, wait for the program to close automatically.
+3. Run the exe program again, wait for the server to start.
+4. Open DayZ, find your server in LAN, set DLC and join.
+5. Start playing!
+
+## Advanced Usage (Custom Configuration)
+
+1. Put `server-tools.exe` in an empty folder.
+2. Create a `config.yaml` file in this folder.
+3. Fill in the following configuration in `config.yaml`:
 
 ```yaml
-server_name: "ServerTest"
-port: 2302
-mission: "dayzOffline.chernarusplus"
-client_mods: ["@CF"]
-server_mods: []
+server_name: "ServerTest" # Server name
+port: 2302 # Port number
+mission: "dayzOffline.chernarusplus" # Map mission
+client_mods: ["@CF"] # Client mods
+server_mods: [] # Server mods
 ```
 
-4. Start `server-tools.exe` once, then make sure you have the folders `mpmissions`, `profiles`, and `serverCfgs` in your directory.
-5. Note the `server_name` in your `config.yaml`, and then create a new .cfg file with the same name as it. For example, in my code above, my `server_name` is `ServerTest`, so I will create a new `ServerTest.cfg` file in the `serverCfgs` folder
-6. Fill out this cfg file, official reference:
+4. Run `server-tools.exe` for the first time, make sure the folders `mpmissions`, `profiles`, and `serverCfgs` are generated in the directory.
+5. According to the `server_name` in `config.yaml`, create the corresponding configuration file. For example, if `server_name` is `ServerTest`, create a `ServerTest.cfg` file in the `serverCfgs` folder.
+6. Fill in the cfg file content, official reference:
 
 ```cfg
-hostname = "EXAMPLE NAME";  // Server name
-password = "";              // Password to connect to the server
-passwordAdmin = "";         // Password to become a server admin
+hostname = "Example Server";     // Server name
+password = "";                   // Password to connect to the server
+passwordAdmin = "";              // Admin password
 
-description = "";			// Description of the server. Gets displayed to users in client server browser.
+description = "";                // Server description, shown in client server browser
 
-enableWhitelist = 0;        // Enable/disable whitelist (value 0-1)
+enableWhitelist = 0;             // Enable/disable whitelist (0-1)
 
-maxPlayers = 60;            // Maximum amount of players
+maxPlayers = 60;                 // Maximum number of players
 
-verifySignatures = 2;       // Verifies .pbos against .bisign files. (only 2 is supported)
-forceSameBuild = 1;         // When enabled, the server will allow the connection only to clients with same the .exe revision as the server (value 0-1)
+verifySignatures = 2;            // Verify .pbo file signatures (only 2 is supported)
+forceSameBuild = 1;              // Force client version to match server version (0-1)
 
-disableVoN = 0;             // Enable/disable voice over network (value 0-1)
-vonCodecQuality = 20;       // Voice over network codec quality, the higher the better (values 0-30)
+disableVoN = 0;                  // Enable/disable voice (0-1)
+vonCodecQuality = 20;            // Voice codec quality (0-30)
 
-shardId = "123abc";			// Six alphanumeric characters for Private server
+shardId = "123abc";              // Six-character alphanumeric identifier for private server
 
-disable3rdPerson=0;         // Toggles the 3rd person view for players (value 0-1)
-disableCrosshair=0;         // Toggles the cross-hair (value 0-1)
+disable3rdPerson=0;              // Toggle third-person view (0-1)
+disableCrosshair=0;              // Toggle crosshair (0-1)
 
-disablePersonalLight = 1;   // Disables personal light for all clients connected to server
-lightingConfig = 0;         // 0 for brighter night setup, 1 for darker night setup
+disablePersonalLight = 1;        // Disable personal light for all clients
+lightingConfig = 0;              // 0 for brighter night, 1 for darker night
 
-serverTime="SystemTime";    // Initial in-game time of the server. "SystemTime" means the local time of the machine. Another possibility is to set the time to some value in "YYYY/MM/DD/HH/MM" format, f.e. "2015/4/8/17/23" .
-serverTimeAcceleration=12;  // Accelerated Time (value 0-24)// This is a time multiplier for in-game time. In this case, the time would move 24 times faster than normal, so an entire day would pass in one hour.
-serverNightTimeAcceleration=1;  // Accelerated Nigh Time - The numerical value being a multiplier (0.1-64) and also multiplied by serverTimeAcceleration value. Thus, in case it is set to 4 and serverTimeAcceleration is set to 2, night time would move 8 times faster than normal. An entire night would pass in 3 hours.
-serverTimePersistent=0;     // Persistent Time (value 0-1)// The actual server time is saved to storage, so when active, the next server start will use the saved time value.
+serverTime="SystemTime";         // Initial server time, "SystemTime" uses local machine time
+serverTimeAcceleration=12;       // Time acceleration multiplier (0-24)
+serverNightTimeAcceleration=1;   // Night time acceleration multiplier (0.1-64)
+serverTimePersistent=0;          // Persistent time (0-1)
 
-guaranteedUpdates=1;        // Communication protocol used with game server (use only number 1)
+guaranteedUpdates=1;             // Game server communication protocol (use only 1)
 
-loginQueueConcurrentPlayers=5;  // The number of players concurrently processed during the login process. Should prevent massive performance drop during connection when a lot of people are connecting at the same time.
-loginQueueMaxPlayers=500;       // The maximum number of players that can wait in login queue
+loginQueueConcurrentPlayers=5;   // Number of players processed concurrently during login
+loginQueueMaxPlayers=500;        // Maximum number of players in login queue
 
-instanceId = 1;             // DayZ server instance id, to identify the number of instances per box and their storage folders with persistence files
+instanceId = 1;                  // DayZ server instance ID
 
-storageAutoFix = 1;         // Checks if the persistence files are corrupted and replaces corrupted ones with empty ones (value 0-1)
-
+storageAutoFix = 1;              // Check and fix corrupted persistence files (0-1)
 
 class Missions
 {
     class DayZ
     {
-        template="dayzOffline.chernarusplus"; // Mission to load on server startup. <MissionName>.<TerrainName>
-					      // Vanilla mission: dayzOffline.chernarusplus
-					      // DLC mission: dayzOffline.enoch
+        template="dayzOffline.chernarusplus"; // Mission loaded at server startup
     };
 };
 ```
 
-7. Put your map mission file in the mpmissions folder and make sure its name is the same as the name you have in the configuration file.
+7. Put the map mission file into the mpmissions folder, make sure the file name matches the name in the configuration file.
 
-**！Please note that the map configured in the cfg will not take effect 👇（This code below will not work）**
+**Note: The map configuration in the cfg will not take effect 👇 (the following code is invalid)**
 
 ```
 class Missions
 {
     class DayZ
     {
-        template="dayzOffline.chernarusplus"; // Mission to load on server startup. <MissionName>.<TerrainName>
-					      // Vanilla mission: dayzOffline.chernarusplus
-					      // DLC mission: dayzOffline.enoch
+        template="dayzOffline.chernarusplus"; // Mission loaded at server startup
     };
 };
 ```
 
-8. Run the exe file and enjoy.
+8. Run the exe file to start using.
 
 ---
 
