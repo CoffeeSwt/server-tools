@@ -7,6 +7,7 @@
 Easy management of Dayz's servers
 
 ## Requirement
+
 1. Ensure you have installed DayZ and DayZServer via Steam
 2. Ensure you have lanuched DayZ Lanucher at least once
 3. After you change your mod, ensure you you have lanuched DayZ Lanucher to make the mod update successfully
@@ -95,6 +96,7 @@ class Missions
     };
 };
 ```
+
 8. Run the exe file and enjoy.
 
 ---
@@ -104,22 +106,33 @@ class Missions
 轻松管理 DayZ 服务器
 
 ## 前置要求
-1. 确保你通过Steam安装好了DayZ和DayZ Server
-2. 确保你至少启动过一次DayZ客户端启动器
+
+1. 确保你通过 Steam 安装好了 DayZ 和 DayZ Server
+2. 确保你至少启动过一次 DayZ 客户端启动器
 3. 如果你需要安装模组，请确保你订阅模组后，启动过游戏启动器，以确保模组更新完成
 
 ## 使用方法
+
+## 快速启动
+
+1. 建立一个空文件夹（不要在桌面，不要使用中文），将该 exe 程序拖入这个空文件夹
+2. 双击启动一次 exe 程序，等待程序会自动关闭
+3. 再次启动 exe 程序，等待服务器开启
+4. 打开 DayZ 游戏，在 LAN 找到你的服务器，设置 DLC 并加入
+5. 开始玩吧~
+
+## 高级使用（自定义配置）
 
 1. 将 `server-tools.exe` 放置在空文件夹中
 2. 在该文件夹中创建 `config.yaml` 文件
 3. 在 `config.yaml` 中填写以下配置项
 
 ```yaml
-server_name: "ServerTest"    # 服务器名称
-port: 2302                   # 端口号
-mission: "dayzOffline.chernarusplus"    # 地图任务
-client_mods: ["@CF"]         # 客户端模组
-server_mods: []              # 服务器模组
+server_name: "ServerTest" # 服务器名称
+port: 2302 # 端口号
+mission: "dayzOffline.chernarusplus" # 地图任务
+client_mods: ["@CF"] # 客户端模组
+server_mods: [] # 服务器模组
 ```
 
 4. 首次运行 `server-tools.exe`，确保目录中已生成 `mpmissions`、`profiles` 和 `serverCfgs` 文件夹
